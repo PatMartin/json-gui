@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.theme.min.css">
+
+    <meta charset="utf-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="https://dexjs.net/js/dex.min.js"></script>
+    <style>
+        html, body, #chart {
+            height: 100%;
+            min-height: 100%;
+            width: 100%;
+            min-width: 100%;
+        }
+
+    </style>
+</head>
+<div id="chart"></div>
+<body>
+<script>
+var csv = { 'header' : ["Party","Home State","President"],
+		 'data' : [["Independent","Virginia","George Washington"],
+		["Federalist","Massachusetts","John Adams"],
+		["Democratic-Republican","Virginia","Thomas Jefferson"],
+		["Democratic-Republican","Virginia","James Madison"],
+		["Democratic-Republican","Virginia","James Monroe"],
+		["Democratic-Republican/National Republican","Massachusetts","John Quincy Adams"],
+		["Democratic","Tennessee","Andrew Jackson"],
+		["Democratic","New York","Martin Van Buren"],
+		["Whig","Ohio","William Henry Harrison"],
+		["Whig","Virginia","John Tyler"],
+		["Democratic","Tennessee","James K. Polk"],
+		["Whig","Louisiana","Zachary Taylor"],
+		["Whig","New York","Millard Fillmore"],
+		["Democratic","New Hampshire","Franklin Pierce"],
+		["Democratic","Pennsylvania","James Buchanan"],
+		["Republican/National Union","Illinois","Abraham Lincoln"],
+		["Democratic/National Union","Tennessee","Andrew Johnson"],
+		["Republican","Ohio","Ulysses S. Grant"],
+		["Republican","Ohio","Rutherford B. Hayes"],
+		["Republican","Ohio","James A. Garfield"],
+		["Republican","New York","Chester A. Arthur"],
+		["Democratic","New York","Grover Cleveland"],
+		["Republican","Indiana","Benjamin Harrison"],
+		["Democratic","New York","Grover Cleveland (2nd term)"],
+		["Republican","Ohio","William McKinley"],
+		["Republican","New York","Theodore Roosevelt"],
+		["Republican","Ohio","William Howard Taft"],
+		["Democratic","New Jersey","Woodrow Wilson"],
+		["Republican","Ohio","Warren G. Harding"],
+		["Republican","Massachusetts","Calvin Coolidge"],
+		["Republican","Iowa","Herbert Hoover"],
+		["Democratic","New York","Franklin D. Roosevelt"],
+		["Democratic","Missouri","Harry S. Truman"],
+		["Republican","Texas","Dwight D. Eisenhower"],
+		["Democratic","Massachusetts","John F. Kennedy"],
+		["Democratic","Texas","Lyndon B. Johnson"],
+		["Republican","California","Richard Nixon"],
+		["Republican","Michigan","Gerald Ford"],
+		["Democratic","Georgia","Jimmy Carter"],
+		["Republican","California","Ronald Reagan"],
+		["Republican","Texas","George H. W. Bush"],
+		["Democratic","Arkansas","Bill Clinton"],
+		["Republican","Texas","George W. Bush"],
+		["Democratic","Illinois","Barack Obama"]] };
+
+  var chart = dex.charts.d3.Dendrogram({
+    'parent': '#chart',
+    'csv': csv,
+    'width' : 800,
+    'height' : 500
+  }).render();
+
+  function setValue(name, value)
+  {
+    chart.attr(name, value).update();
+  }
+  
+  function getGuiDefinition() {
+		var config =
+		[
+		  { 
+	        "type": "group",
+			"name": "Chart Dimensions",
+			"contents" :
+			[
+			  {
+			    "name" : "Height",
+				"description" : "The height of the chart.",
+				"target" : "height",
+				"type" : "int",
+				"minValue" : 0,
+				"maxValue" : 2000,
+				"step" : 1,
+				"initialValue" : chart.attr("height")
+			  },
+			  {
+			    "name" : "Width",
+				"description" : "The width of the chart.",
+				"target" : "width",
+				"type" : "int",
+				"minValue" : 0,
+				"maxValue" : 2000,
+				"step" : 1,
+				"initialValue" : chart.attr("width")
+			  },
+			  {
+				"name" : "Top Margin",
+				"description" : "The top margin of the chart.",
+				"target" : "margin.top",
+				"type" : "int",
+				"minValue" : 0,
+				"maxValue" : 500,
+				"step" : 1,
+				"initialValue" : chart.attr("margin.top")
+			  },
+			  {
+				"name" : "Bottom Margin",
+				"description" : "The bottom margin of the chart.",
+				"target" : "margin.bottom",
+				"type" : "int",
+				"minValue" : 0,
+				"maxValue" : 500,
+				"step" : 1,
+				"initialValue" : chart.attr("margin.bottom")
+			  },
+			  {
+				"name" : "Left Margin",
+				"description" : "Left top margin of the chart.",
+				"target" : "margin.left",
+				"type" : "int",
+				"minValue" : 0,
+				"maxValue" : 500,
+				"step" : 1,
+				"initialValue" : chart.attr("margin.left")
+			  },
+			  {
+				"name" : "Right Margin",
+				"description" : "The right margin of the chart.",
+				"target" : "margin.right",
+				"type" : "int",
+				"minValue" : 0,
+				"maxValue" : 500,
+				"step" : 1,
+				"initialValue" : chart.attr("margin.right")
+			  }
+			]
+		  },
+		  { 
+		    "type": "group",
+			"name": "General Options",
+			"contents" :
+			[
+			  {
+			    "name" : "Connection Type",
+				"description" : "The connection type.",
+				"target" : "connectionType",
+				"type" : "choice",
+				"choices" : [ "diagonal", "elbow" ],
+				"initialValue" : "diagonal"
+			  },
+			  {
+				"name" : "Connection Length",
+				"description" : "The connection length.",
+				"target" : "connection.length",
+				"type" : "string",
+				"initialValue" : "fit-text"
+			  }
+			]
+		  },
+		  { 
+			"type": "group",
+			"name": "Link Options",
+			"contents" :
+			[
+			  {
+				"type" : "group",
+				"name" : "Fill Options",
+			    "contents" :
+			    [
+			      {
+			        "name" : "Fill Color",
+				    "description" : "The color of the links.",
+				    "target" : "link.fill.fillColor",
+				    "type" : "color",
+				    "initialValue" : chart.attr("link.fill.fillColor")
+			      },
+			      {
+				    "name" : "Fill Opacity",
+				    "description" : "The fill opacity.",
+				    "target" : "link.fill.opacity",
+				    "type" : "float",
+				    "minValue": 0.0,
+				    "maxValue": 1.0,
+				    "initialValue" : 1.0
+			      }
+			    ]
+			  },
+		  	  { 
+				"type": "group",
+				"name": "Stroke Options",
+				"contents" :
+				[
+			      {
+			        "name" : "Stroke Color",
+				    "description" : "The color of the links.",
+				    "target" : "link.stroke.color",
+				    "type" : "color",
+				    "initialValue" : chart.attr("link.stroke.color")
+			      },
+			      {
+				    "name" : "Stroke Opacity",
+				    "description" : "The stroke opacity.",
+				    "target" : "link.stroke.opacity",
+				    "type" : "float",
+				    "minValue": 0.0,
+				    "maxValue": 1.0,
+				    "initialValue" : 1.0
+			      },
+			      {
+					"name" : "Stroke Width",
+					"description" : "The stroke width.",
+					"target" : "link.stroke.width",
+					"type" : "float",
+					"minValue": 0.0,
+					"maxValue": 20.0,
+					"initialValue" : 1.0
+				  },
+				  {
+					"name" : "Dash Array",
+					"description" : "The stroke dash array.",
+					"target" : "link.stroke.dasharray",
+					"type" : "string",
+					"initialValue" : chart.attr("link.stroke.dasharray")
+				  }
+			    ]
+			  }
+			]
+		  }
+		];
+		return JSON.stringify(config);
+	  }
+</script>
+</body>
